@@ -43,7 +43,7 @@ app.post('/upload', upload.single('jsonFile'), (req, res) => {
       // Filter and extract coordinates of type "Point" with class "Marker"
       const points = jsonData.features.filter(
         feature => feature.geometry.type === 'Point' &&
-                    feature.properties.class === 'Marker'
+          feature.properties.class === 'Marker'
       );
 
       // Calculate bearing and distance for each combination of coordinates and titles
@@ -54,6 +54,15 @@ app.post('/upload', upload.single('jsonFile'), (req, res) => {
 
       res.setHeader('Content-Type', 'application/json');
       res.send(formattedResponse);
+
+      // Delete the uploaded file after processing
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error('Error deleting file:', err);
+        } else {
+          console.log('File has been deleted successfully.');
+        }
+      });
     } catch (error) {
       return res.status(400).send('Invalid JSON format.');
     }
