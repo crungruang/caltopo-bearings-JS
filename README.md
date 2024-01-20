@@ -15,10 +15,9 @@
 
 1. `npm install`
 2. `node app.js`
-3. Service default runs on (http://localhost:8080)[http://localhost:8080]
-
+3. Service default runs on [http://localhost:8080](http://localhost:8080)
 ### From Dockerfile
 
 1. `docker build -t calbear:latest .`
 2. `docker run --name calbear --rm -p 8080:8080 -d calbear:latest`
-3. Service default runs on (http://localhost:8080)[http://localhost:8080]
+3. Service default runs on [http://localhost:8080](http://localhost:8080)
