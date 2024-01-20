@@ -49,12 +49,27 @@ app.post('/upload', upload.single('jsonFile'), (req, res) => {
       // Calculate bearing and distance for each combination of coordinates and titles
       const result = calculateBearingAndDistance(points);
 
+      // Sort the result alphabetically by title and destination
+      const sortedResult = Object.keys(result).sort().reduce((acc, key) => {
+        acc[key] = result[key].sort((a, b) => {
+          const destinationComparison = a.to.localeCompare(b.to);
+          return destinationComparison !== 0 ? destinationComparison : a.from.localeCompare(b.from);
+        });
+        return acc;
+      }, {});
+
       // Format the result as a JSON response with new lines
-      const formattedResponse = JSON.stringify(result, null, 2);
+      let formattedResponse = '';
 
-      res.setHeader('Content-Type', 'application/json');
-      res.send(formattedResponse);
+      Object.keys(sortedResult).forEach(title => {
+      formattedResponse += `${title}:\n`;
+      sortedResult[title].forEach(entry => {
+      formattedResponse += `  - From: ${entry.from}, To: ${entry.to}, Bearing: ${entry.bearing.toFixed(2)}, Distance: ${entry.distance}\n`;
+      });
+    });
 
+res.setHeader('Content-Type', 'text/plain'); // Set content type to plain text
+res.send(formattedResponse);
       // Delete the uploaded file after processing
       fs.unlink(filePath, (err) => {
         if (err) {
